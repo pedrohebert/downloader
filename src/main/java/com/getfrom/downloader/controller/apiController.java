@@ -2,10 +2,10 @@ package com.getfrom.downloader.controller;
 
 
 import com.getfrom.downloader.services.apiServices;
-import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -21,8 +21,13 @@ public class apiController {
         this.apiServices = apiServices;
     }
 
+
     @GetMapping("downloads")
-    public HttpEntity<byte[]> download(@PathParam("file") String file) throws IOException {
-        return apiServices.download(file);
+    public HttpEntity<byte[]> GetVideo(@RequestParam("url") String url, @RequestParam("ext") String ext ) throws IOException, InterruptedException {
+        System.out.println("chamado, url ="+url+" , ext = "+ext);
+        String title = apiServices.getTitle(url);
+        apiServices.GetVideo(url, title, ext);
+        return apiServices.download(title, ext);
+
     }
 }
