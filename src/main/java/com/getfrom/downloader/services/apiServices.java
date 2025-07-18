@@ -2,12 +2,15 @@ package com.getfrom.downloader.services;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,24 +20,33 @@ import java.util.Objects;
 @Service
 public class apiServices {
 
-    public HttpEntity<byte[]> download(String file, String ext) throws IOException {
-        byte[] arquivo = Files.readAllBytes(Paths.get("src\\main\\resources\\downloads\\" + file + "." + ext));
 
-        HttpHeaders httpHeaders = new HttpHeaders();
+    public ResponseEntity<byte[]> SendFile(String file, String ext) throws IOException {
 
-        httpHeaders.add("Content-Disposition", "attachment;filename=\"" + file + "." + ext +"\"");
-        System.out.println(httpHeaders);
+        Path filePath = Paths.get("src\\main\\resources\\downloads\\" + file + "." + ext);
+        byte[] videoBytes = Files.readAllBytes(filePath);
+        
+        String contentType = switch (ext){
+            case "mp4" -> "video/mp4";
+            case "webm" -> "video/webm";
+            case ".mkv" -> "video/x-matroska";
+            default -> "application/octet-stream";
+        };
 
-        return new HttpEntity<byte[]>(arquivo, httpHeaders);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment;filename=\"" + file + "." + ext +"\"")
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(videoBytes);
     }
 
     public void GetVideo(String url, String title, String ext) throws IOException, InterruptedException {
-        String aext;
-        if (Objects.equals(ext, "mp4")) {
-            aext = "m4a";
-        }else {
-            aext = "webm";
-        }
+
+        String aext = switch (ext){
+            case "mp4" -> "m4a";
+            case "webm" -> "wemb";
+            default -> "webm";
+        };
+
         ProcessBuilder pb = new ProcessBuilder("yt-dlp",
                 "--concurrent-fragments", " 10 ",
                 "--fragment-retries", "10",
