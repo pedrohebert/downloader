@@ -3,17 +3,10 @@ package com.getfrom.downloader.services;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.io.*;
-
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 
 
 @Service
