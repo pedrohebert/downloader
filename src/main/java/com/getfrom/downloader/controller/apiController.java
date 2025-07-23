@@ -2,6 +2,7 @@ package com.getfrom.downloader.controller;
 
 
 import com.getfrom.downloader.services.apiServices;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,18 +25,12 @@ public class apiController {
 
 
     @GetMapping("downloads")
-    public HttpEntity<byte[]> GetVideo(@RequestParam("url") String url, @RequestParam("ext") String ext ) throws IOException, InterruptedException {
-        System.out.println("chamado, url ="+url+" , ext = "+ext);
-        String title = apiServices.getTitle(url);
-        apiServices.GetVideo(url, title, ext);
-        return apiServices.SendFile(title, ext);
+    public void StreamMidia(
+            @RequestParam("url") String url,
+            @RequestParam("ext") String ext,
+            HttpServletResponse response
+    ) throws IOException {
+        apiServices.SendMidia(url, ext, response);
     }
 
-    @GetMapping("teste")
-    public ResponseEntity<byte[]> seadVideo(@RequestParam("url") String url, @RequestParam("ext") String ext ) throws IOException, InterruptedException {
-        System.out.println("chamado, url ="+url+" , ext = "+ext);
-        String title = apiServices.getTitle(url);
-        apiServices.GetVideo(url, title, ext);
-        return apiServices.SendFile(title, ext);
-    }
 }
