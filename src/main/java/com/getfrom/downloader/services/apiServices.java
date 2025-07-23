@@ -25,12 +25,12 @@ public class apiServices {
                 new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)
         );
 
-        title = reader.readLine();
+        title = reader.readLine().replaceAll("[\\\\/:*?\"<>|]", "");
         System.out.println(title);
 
         process.waitFor();
 
-        return title.replaceAll("[\\\\/:*?\"<>|]", "");
+        return title;
     }
 
     public void SendMidia(String url, String ext, HttpServletResponse response) throws IOException {
@@ -49,7 +49,7 @@ public class apiServices {
                     .build();
 
             response.setContentType(contentType);
-            response.setHeader("", contentDisposition.toString());
+            response.setHeader("Content-Disposition", contentDisposition.toString());
             response.setCharacterEncoding("utf-8");
 
             try (InputStream inputStreamProcess = ytDlpProcess.getInputStream();
@@ -58,11 +58,12 @@ public class apiServices {
                 byte[] buffer = new byte[1024 * 8];
                 int byteRead;
 
-                while ((byteRead = inputStreamProcess.read(buffer)) != 0){
+                while ((byteRead = inputStreamProcess.read(buffer)) != -1){
                     outputStreamResponse.write(buffer, 0, byteRead);
                     outputStreamResponse.flush();
                 }
             }
+
             int exitCode = ytDlpProcess.waitFor();
             if (exitCode != 0){
                 throw new RuntimeException("Processo falhou com código " + exitCode);
